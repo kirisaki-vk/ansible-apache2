@@ -7,3 +7,4 @@ generate_playbook
 /output.ansible.yaml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
+corrected.ansible.yaml
