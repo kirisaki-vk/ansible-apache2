@@ -20,7 +20,7 @@ args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 
 
 args = args_parser.parse_args()
 
-yaml = YAML()
+yaml = YAML(typ='rt')
 yaml.indent(mapping=2, sequence=4, offset=2)
 yaml.explicit_start = True
 
@@ -72,7 +72,7 @@ def generate_list(list):
             'group': 'root',
             'mode': '0644'
         },
-        'ansible.builtin.file': {
+        'ansible.builtin.file ': {
             'src': '/etc/apache2/sites-available/{{ link }}.conf',
             'dest': '/etc/apache2/sites-enabled/{{ link }}.conf',
             'state': 'link'
