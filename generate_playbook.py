@@ -44,8 +44,14 @@ yaml_data = {
 def parse_list(file):
     with open(file, 'r') as list:
         lines = list.readlines()
+        ret = []
 
-    return [urlparse(line.strip()).netloc for line in lines]
+        for line in lines:
+            if not urlparse(line.strip()).netloc:
+               ret.append(urlparse(line.strip()).path)
+            else : ret.append(urlparse(line.strip()).netloc)
+
+    return ret
 
 def generate_list(list):
     port_number = 49152
