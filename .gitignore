@@ -1,10 +1,7 @@
 generate_playbook.build/
 generate_playbook
-/.idea/ansible-apache2.iml
 /generate_playbook.bin
-/.idea/misc.xml
-/.idea/modules.xml
 /output.ansible.yaml
-/.idea/inspectionProfiles/profiles_settings.xml
-/.idea/vcs.xml
+/.idea
 corrected.ansible.yaml
+/.vscode
