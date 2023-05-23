@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import yaml
+from ruamel.yaml import YAML
 import argparse
 from urllib.parse import urlparse
 
@@ -20,8 +20,10 @@ args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 
 
 args = args_parser.parse_args()
 
-yaml_header = "---"
-yaml_data = [{
+yaml = YAML()
+yaml.explicit_start = True
+
+yaml_data = {
     'name': 'Deploying hosts',
     'host': f'{args.target}',
     'remote_user': f'{args.user}',
@@ -35,7 +37,7 @@ yaml_data = [{
             }
         }
     ]
-}]
+}
 
 
 def parse_list(file):
@@ -46,7 +48,7 @@ def parse_list(file):
 
 def generate_list(list):
     port_number = 49152
-    yaml_data[0]['tasks'].append({
+    yaml_data['tasks'].append({
         'name': 'Deploying hosts',
         'vars': {
             'links': list
@@ -78,4 +80,4 @@ def generate_list(list):
 generate_list(parse_list('test.txt'))
 
 with open(args.output, 'w') as output:
-    yaml.dump(yaml_data, output, sort_keys=False, explicit_start=True, Dumper=yaml.CDumper)
+    yaml.dump(yaml_data, output)
