@@ -21,6 +21,7 @@ args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 
 args = args_parser.parse_args()
 
 yaml = YAML()
+yaml.indent(mapping=2, sequence=4, offset=2)
 yaml.explicit_start = True
 
 yaml_data = {
