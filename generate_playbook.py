@@ -99,11 +99,3 @@ yaml_corrected = '\n'.join(yaml_corrected)
 
 with open(args.output, 'w') as output:
     output.write(yaml_corrected)
-
-# with open(args.output, 'r+') as output_file:
-#     lines = output_file.readlines()
-#     output_file.seek(1) 
-
-#     for line in lines[1:]:
-#         modified_line = line[2:]
-#         output_file.write(modified_line)
