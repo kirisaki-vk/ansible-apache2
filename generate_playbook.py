@@ -3,6 +3,7 @@
 from ruamel.yaml import YAML
 import argparse
 from urllib.parse import urlparse
+from io import StringIO
 
 args_parser = argparse.ArgumentParser(
     prog='ansible2apache',
@@ -21,11 +22,10 @@ args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 
 
 args = args_parser.parse_args()
 
-yaml = YAML(typ='rt')
+yaml = YAML(typ=['rt', 'string'])
 yaml.indent(mapping=2, sequence=4, offset=2)
-yaml.explicit_start = True
 
-yaml_data = {
+yaml_data = [{
     'name': 'Deploying hosts',
     'host': f'{args.target}',
     'remote_user': f'{args.user}',
@@ -42,7 +42,7 @@ yaml_data = {
             }
         }
     ]
-}
+}]
 
 def parse_list(file):
     with open(file, 'r') as list:
@@ -58,7 +58,7 @@ def parse_list(file):
 
 def generate_list(list):
     port_number = 49152
-    yaml_data['tasks'].append({
+    yaml_data[0]['tasks'].append({
         'name': 'Deploying hosts',
         'vars': {
             'links': list
@@ -88,5 +88,22 @@ def generate_list(list):
 
 generate_list(parse_list('test.txt'))
 
+yaml_data_dump = StringIO()
+yaml.dump(yaml_data, yaml_data_dump)
+yaml_data_dump.seek(0)
+yaml_string = yaml_data_dump.read().split('\n')
+
+yaml_corrected = [ lines[2:] for lines in yaml_string]
+yaml_corrected.insert(0, '---')
+yaml_corrected = '\n'.join(yaml_corrected)
+
 with open(args.output, 'w') as output:
-    yaml.dump(yaml_data, output)
+    output.write(yaml_corrected)
+
+# with open(args.output, 'r+') as output_file:
+#     lines = output_file.readlines()
+#     output_file.seek(1) 
+
+#     for line in lines[1:]:
+#         modified_line = line[2:]
+#         output_file.write(modified_line)
