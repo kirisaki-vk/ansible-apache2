@@ -14,6 +14,7 @@ args_parser.add_argument("-t", "--target", help='''Hosts name''', required=True)
 args_parser.add_argument("-i", "--input", help='''File containing the list to parse''', required=True)
 args_parser.add_argument("-o", "--output", help='''Output filename (Default 'output.ansible.yaml')''', required=False,
                          default="./output.ansible.yaml")
+args_parser.add_argument("-k", "--ssh_key", help="Path to the private ssh key file",required=True)
 args_parser.add_argument("-m", "--template", help='''Path to the configuration template. Variables are "port", "link", "path", "subpath"''', required=True)
 args_parser.add_argument("-u", "--user", help='''User to log in (Default is 'root')''', required=False, default="root")
 args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.1')
@@ -29,6 +30,9 @@ yaml_data = {
     'host': f'{args.target}',
     'remote_user': f'{args.user}',
     'become': True,
+    'vars': {
+        'ansible_ssh_private_key_file': f'{args.ssh_key}',
+    },
     'tasks': [
         {
             'name': 'Check if apache is installed and in the lastest version',
@@ -39,7 +43,6 @@ yaml_data = {
         }
     ]
 }
-
 
 def parse_list(file):
     with open(file, 'r') as list:
@@ -76,8 +79,7 @@ def generate_list(list):
             'src': '/etc/apache2/sites-available/{{ link }}.conf',
             'dest': '/etc/apache2/sites-enabled/{{ link }}.conf',
             'state': 'link'
-        }
-        ,
+        },
         'loop': '{{ links }}',
         'loop_control': {
             'loop_var': 'link'
