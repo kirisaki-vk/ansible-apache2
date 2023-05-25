@@ -37,6 +37,10 @@ def parse_list(file):
 
     return ret
 
+
+lists = parse_list(args.input)
+port_number = 49152
+
 yaml_data = [{
     'name': 'Deploying hosts',
     'hosts': f'{args.target}',
@@ -44,7 +48,8 @@ yaml_data = [{
     'become': True,
     'vars': {
         'ansible_ssh_private_key_file': f'{args.ssh_key}',
-        'links': parse_list(args.input)
+        'links': lists,
+        'port': [ host for host in range(port_number, port_number + len(lists)) ]
     },
     'tasks': [
         {
@@ -58,7 +63,6 @@ yaml_data = [{
 }]
 
 def generate_list():
-    port_number = 49152
     body = [{
         'name': 'Generating sites root',
         'ansible.legacy.file': {
@@ -75,15 +79,15 @@ def generate_list():
         'name': 'Copying files configuration',
         'ansible.builtin.template': {
             'src': args.template,
-            'dest': '/etc/apache2/sites-available/{{ link }}.conf',
+            'dest': '/etc/apache2/sites-available/{{ item.0 }}.conf',
             'owner': 'root',
             'group': 'root',
             'mode': '0644'
         },
-        'loop': '{{ links }}',
-        'loop_control': {
-            'loop_var': 'link'
-        }
+        'with_together': [
+            '{{ links }}',
+            '{{ port }}'
+        ]
     },
     {
         'name': 'Enabling sites',

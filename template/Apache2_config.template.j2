@@ -1,5 +1,5 @@
-<VirtualHost *:{{port}}>
-	ServerName {{link}}
-	ServerAlias {{subpath}}
-	DocumentRoot /var/{{path}}/{{subpath}}
+<VirtualHost *:{{ item.1 }}>
+	ServerName {{ item.0 }}
+	ServerAlias {{ '.'.join(item.0.split('.')[1:]) }}
+	DocumentRoot /var/{{ item.0.split('.')[0] }}/{{ item.0.split('.')[1] }}
 </VirtualHost>
