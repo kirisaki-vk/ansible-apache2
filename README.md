@@ -28,7 +28,7 @@ There are several options you will need to specify to generate an ansible playbo
 
  - **`--target` or `-t`**: Indicates your hosts name in your inventory **[Required]**
  - **`--input` or ``-i`**: Path to the file of _sites lists_* **[Required]**
- - **`--template` or `-m`**: Path to the Apache2 configuration path. Variables are `item.1` for the allocated **port** and `item.0` is the sites name
+ - **`--template` or `-m`**: Path to the Apache2 configuration path. Variables are `item.1` for the allocated **port** and `item.0` is the **sites name** **[Required]**
  - **`--ssk_key` or `-k`**: Path to your private ssh key **[Required]**
  - **`--output` or `-o`**: Name of the output playbook file (Default is `output.ansible.yaml`)
  - **`--user` or `-u`**: Username to connect for each hosts by ssh (Default is `root` user)
