@@ -7,7 +7,7 @@ from io import StringIO
 
 args_parser = argparse.ArgumentParser(
     prog='ansible2apache',
-    description='A simple program wich generate an Ansible playbook to deploy multiple Virtual Hosts',
+    description='A simple CLI wich generate an Ansible playbook to deploy multiple Virtual Hosts',
     epilog='Written by Kirisaki_VK'
 )
 
