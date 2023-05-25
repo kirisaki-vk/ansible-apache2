@@ -25,25 +25,6 @@ args = args_parser.parse_args()
 yaml = YAML(typ=['rt', 'string'])
 yaml.indent(mapping=2, sequence=4, offset=2)
 
-yaml_data = [{
-    'name': 'Deploying hosts',
-    'hosts': f'{args.target}',
-    'remote_user': f'{args.user}',
-    'become': True,
-    'vars': {
-        'ansible_ssh_private_key_file': f'{args.ssh_key}',
-    },
-    'tasks': [
-        {
-            'name': 'Check if apache is installed and in the lastest version',
-            'ansible.builtin.apt': {
-                'name': 'apache2',
-                'status': 'lastest'
-            }
-        }
-    ]
-}]
-
 def parse_list(file):
     with open(file, 'r') as list:
         lines = list.readlines()
@@ -56,18 +37,42 @@ def parse_list(file):
 
     return ret
 
-def generate_list(list):
+yaml_data = [{
+    'name': 'Deploying hosts',
+    'hosts': f'{args.target}',
+    'remote_user': f'{args.user}',
+    'become': True,
+    'vars': {
+        'ansible_ssh_private_key_file': f'{args.ssh_key}',
+        'links': parse_list(args.input)
+    },
+    'tasks': [
+        {
+            'name': 'Check if apache is installed and in the lastest version',
+            'ansible.builtin.apt': {
+                'name': 'apache2',
+                'state': 'present'
+            }
+        }
+    ]
+}]
+
+def generate_list():
     port_number = 49152
-    yaml_data[0]['tasks'].append({
-        'name': 'Deploying hosts',
-        'vars': {
-            'links': list
-        },
-        'ansible.builtin.file': {
+    body = [{
+        'name': 'Generating sites root',
+        'ansible.legacy.file': {
             'path': "/var/{{  link.split('.')[0] }}/{{ link.split('.')[1] }}",
             'state': 'directory',
             'mode' : '0755'
         },
+        'loop': '{{ links }}',
+        'loop_control': {
+            'loop_var': 'link'
+        }
+    },
+    {
+        'name': 'Copying files configuration',
         'ansible.builtin.copy': {
             'src': args.template,
             'dest': '/etc/apache2/sites-available/{{ link }}.conf',
@@ -75,7 +80,14 @@ def generate_list(list):
             'group': 'root',
             'mode': '0644'
         },
-        'ansible.builtin.file ': {
+        'loop': '{{ links }}',
+        'loop_control': {
+            'loop_var': 'link'
+        }
+    },
+    {
+        'name': 'Enabling sites',
+        'ansible.legacy.file': {
             'src': '/etc/apache2/sites-available/{{ link }}.conf',
             'dest': '/etc/apache2/sites-enabled/{{ link }}.conf',
             'state': 'link'
@@ -84,9 +96,12 @@ def generate_list(list):
         'loop_control': {
             'loop_var': 'link'
         }
-    })
+    }]
 
-generate_list(parse_list('test.txt'))
+    for items in body:
+        yaml_data[0]['tasks'].append(items)
+
+generate_list()
 
 yaml_data_dump = StringIO()
 yaml.dump(yaml_data, yaml_data_dump)
