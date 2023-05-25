@@ -27,7 +27,7 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 
 yaml_data = [{
     'name': 'Deploying hosts',
-    'host': f'{args.target}',
+    'hosts': f'{args.target}',
     'remote_user': f'{args.user}',
     'become': True,
     'vars': {
