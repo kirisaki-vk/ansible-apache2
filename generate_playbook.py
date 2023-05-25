@@ -73,7 +73,7 @@ def generate_list():
     },
     {
         'name': 'Copying files configuration',
-        'ansible.builtin.copy': {
+        'ansible.builtin.template': {
             'src': args.template,
             'dest': '/etc/apache2/sites-available/{{ link }}.conf',
             'owner': 'root',
