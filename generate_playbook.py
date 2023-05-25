@@ -53,11 +53,17 @@ yaml_data = [{
     },
     'tasks': [
         {
-            'name': 'Check if apache is installed and in the lastest version',
-            'ansible.builtin.apt': {
-                'name': 'apache2',
-                'state': 'present'
+            'name': 'Getting package facts',
+            'ansible.builtin.package_facts': {
+                'manager': 'auto'
             }
+        },
+        {
+            'name': 'Stop execution if ansible is not present',
+            'ansible.builtin.meta': {
+                'end_play': 'true'
+            },
+            'when': "'apache2' not in ansible_facts.packages"
         }
     ]
 }]
