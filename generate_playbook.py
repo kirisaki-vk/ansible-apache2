@@ -18,7 +18,7 @@ args_parser.add_argument("-o", "--output", help='''Output filename (Default 'out
 args_parser.add_argument("-k", "--ssh_key", help="Path to the private ssh key file",required=True)
 args_parser.add_argument("-m", "--template", help='''Path to the configuration template. Variables are "item.0": link, "item.1": port''', required=True)
 args_parser.add_argument("-u", "--user", help='''User to log in (Default is 'root')''', required=False, default="root")
-args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.1')
+args_parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.1')
 
 args = args_parser.parse_args()
 
