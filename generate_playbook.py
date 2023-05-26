@@ -15,6 +15,7 @@ args_parser.add_argument("-t", "--target", help='''Hosts name''', required=True)
 args_parser.add_argument("-i", "--input", help='''File containing the list to parse''', required=True)
 args_parser.add_argument("-o", "--output", help='''Output filename (Default 'output.ansible.yaml')''', required=False,
                          default="./output.ansible.yaml")
+args_parser.add_argument("-p", "--port",help='Specify port to deploy all the sites (Default 80)', default=80)
 args_parser.add_argument("-k", "--ssh_key", help="Path to the private ssh key file",required=True)
 args_parser.add_argument("-m", "--template", help='''Path to the configuration template. Variables are "item.0": link, "item.1": port''', required=True)
 args_parser.add_argument("-u", "--user", help='''User to log in (Default is 'root')''', required=False, default="root")
@@ -39,7 +40,7 @@ def parse_list(file):
 
 
 lists = parse_list(args.input)
-port_number = 49152
+port_number = args.port
 
 yaml_data = [{
     'name': 'Deploying hosts',
@@ -49,7 +50,7 @@ yaml_data = [{
     'vars': {
         'ansible_ssh_private_key_file': f'{args.ssh_key}',
         'links': lists,
-        'port': [ host for host in range(port_number, port_number + len(lists)) ]
+        'port': port_number
     },
     'tasks': [
         {
@@ -85,15 +86,15 @@ def generate_list():
         'name': 'Copying files configuration',
         'ansible.builtin.template': {
             'src': args.template,
-            'dest': '/etc/apache2/sites-available/{{ item.0 }}.conf',
+            'dest': '/etc/apache2/sites-available/{{ link }}.conf',
             'owner': 'root',
             'group': 'root',
             'mode': '0644'
         },
-        'with_together': [
-            '{{ links }}',
-            '{{ port }}'
-        ]
+        'loop': '{{ links }}',
+        'loop_control': {
+            'loop_var': 'link'
+        }
     },
     {
         'name': 'Enabling sites',
