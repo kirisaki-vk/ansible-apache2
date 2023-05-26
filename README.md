@@ -28,13 +28,16 @@ There are several options you will need to specify to generate an ansible playbo
 
  - **`--target` or `-t`**: Indicates your hosts name in your inventory **[Required]**
  - **`--input` or ``-i`**: Path to the file of _sites lists_* **[Required]**
- - **`--template` or `-m`**: Path to the Apache2 configuration path. Variables are `item.1` for the allocated **port** and `item.0` is the **sites name** **[Required]**
+ - **`--template` or `-m`**: Path to the Apache2 configuration path. Variables are `link` which is the **sites name** **[Required]**
+ - **`--port` or `-p`**: Port number to deploy the sites(Default is `80`)
  - **`--ssk_key` or `-k`**: Path to your private ssh key **[Required]**
  - **`--output` or `-o`**: Name of the output playbook file (Default is `output.ansible.yaml`)
  - **`--user` or `-u`**: Username to connect for each hosts by ssh (Default is `root` user)
  - **`--version` or `-v`**: Display programs version
 
 > Notes: *Sites list are a file wich contains a list of the sites to deploy separated by new line like below
+> This script is better to be run as root
+> Not specifying private ssh key is not supported for now
 
 ```
 https://www.example.com
@@ -52,3 +55,5 @@ https://www.stackoverflow.com
 After running the command you can play the generated playbook to deploy them then put your index.html into each individual sites root.
 
 > Note: sites starting with `www.` will be placed into `/var/www` and so on.
+>
+> Warning: Generated script will stop executing if apache2 is not found on the target host 
