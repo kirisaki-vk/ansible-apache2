@@ -27,7 +27,7 @@ $ python3 generate_playbook.py --help
 There are several options you will need to specify to generate an ansible playbook yaml file
 
  - **`--target` or `-t`**: Indicates your hosts name in your inventory **[Required]**
- - **`--input` or ``-i`**: Path to the file of _sites lists_* **[Required]**
+ - **`--input` or `-i`**: Path to the file of _sites lists_* **[Required]**
  - **`--template` or `-m`**: Path to the Apache2 configuration path. Variables are `link` which is the **sites name** **[Required]**
  - **`--port` or `-p`**: Port number to deploy the sites(Default is `80`)
  - **`--ssk_key` or `-k`**: Path to your private ssh key **[Required]**
